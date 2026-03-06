@@ -344,24 +344,39 @@ div[data-testid="stFileUploader"] > div:hover {
     border-color: #A5B4FC !important;
     background: #FAFAFE !important;
 }
-div[data-testid="stFileUploader"] p {
-    color: #9CA3AF !important;
+/* Drag zone text — "Drag and drop file here" */
+div[data-testid="stFileUploader"] p,
+div[data-testid="stFileUploader"] span:not([data-testid="stFileUploaderFileName"]) {
+    color: #374151 !important;
     font-size: 0.92rem !important;
-    font-weight: 400 !important;
+    font-weight: 500 !important;
+    opacity: 1 !important;
 }
+/* "Limit 200MB per file • CSV" */
 div[data-testid="stFileUploader"] small {
-    color: #D1D5DB !important;
+    color: #6B7280 !important;
     font-size: 0.78rem !important;
+    opacity: 1 !important;
 }
-/* Uploaded filename — make it visible */
-div[data-testid="stFileUploader"] span,
+/* Browse files button inside uploader */
+div[data-testid="stFileUploader"] button,
+div[data-testid="stFileUploader"] [data-testid="stBaseButton-secondary"] {
+    background: #6366F1 !important;
+    color: #FFFFFF !important;
+    border: none !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    font-size: 0.84rem !important;
+    opacity: 1 !important;
+}
+/* Uploaded filename */
 div[data-testid="stFileUploaderFileName"],
 div[data-testid="stFileUploader"] [data-testid="stFileUploaderFileName"],
 div[data-testid="stFileUploader"] .uploadedFileName,
 div[data-testid="stFileUploader"] li span,
 div[data-testid="stFileUploader"] li {
     color: #111111 !important;
-    font-weight: 500 !important;
+    font-weight: 600 !important;
     opacity: 1 !important;
 }
 
@@ -587,10 +602,29 @@ if st.session_state.dark_mode:
         border-color: #6366F1 !important;
         background: #1A1A28 !important;
     }
-    div[data-testid="stFileUploader"] span,
-    div[data-testid="stFileUploader"] li,
+    /* Drag zone text in dark mode */
+    div[data-testid="stFileUploader"] p,
+    div[data-testid="stFileUploader"] span:not([data-testid="stFileUploaderFileName"]) {
+        color: #C9C9D3 !important;
+        opacity: 1 !important;
+    }
+    div[data-testid="stFileUploader"] small {
+        color: #9999B0 !important;
+        opacity: 1 !important;
+    }
+    /* Browse files button in dark mode */
+    div[data-testid="stFileUploader"] button,
+    div[data-testid="stFileUploader"] [data-testid="stBaseButton-secondary"] {
+        background: #6366F1 !important;
+        color: #FFFFFF !important;
+        border: none !important;
+        opacity: 1 !important;
+    }
+    /* Uploaded filename in dark mode — must be white */
+    div[data-testid="stFileUploaderFileName"],
+    div[data-testid="stFileUploader"] [data-testid="stFileUploaderFileName"],
     div[data-testid="stFileUploader"] li span,
-    div[data-testid="stFileUploaderFileName"] { color: #F0F0FF !important; opacity: 1 !important; }
+    div[data-testid="stFileUploader"] li { color: #F0F0FF !important; opacity: 1 !important; }
     div[data-testid="stPlotlyChart"] {
         background: #16161F !important;
         border-color: #2A2A3A !important;
