@@ -529,8 +529,22 @@ button[kind="header"] { display: none !important; }
 #MainMenu { display: none !important; }
 footer { display: none !important; }
 
-/* scrollbar */
-::-webkit-scrollbar { width: 5px; height: 5px; }
+/* Theme toggle button styling */
+div[data-testid="stButton"]:has(button[key="theme_btn"]) button,
+button[data-testid="theme_btn"] {
+    background: #F9FAFB !important;
+    color: #374151 !important;
+    border: 1px solid #E5E7EB !important;
+    font-size: 0.84rem !important;
+    font-weight: 600 !important;
+    box-shadow: none !important;
+    text-align: left !important;
+}
+button[data-testid="theme_btn"]:hover {
+    background: #F3F4F6 !important;
+    transform: none !important;
+}
+
 ::-webkit-scrollbar-track { background: #F2F2F7; }
 ::-webkit-scrollbar-thumb { background: #E5E7EB; border-radius: 4px; }
 ::-webkit-scrollbar-thumb:hover { background: #D1D5DB; }
@@ -575,7 +589,8 @@ if st.session_state.dark_mode:
     }
     div[data-testid="stFileUploader"] span,
     div[data-testid="stFileUploader"] li,
-    div[data-testid="stFileUploader"] li span { color: #F0F0FF !important; }
+    div[data-testid="stFileUploader"] li span,
+    div[data-testid="stFileUploaderFileName"] { color: #F0F0FF !important; opacity: 1 !important; }
     div[data-testid="stPlotlyChart"] {
         background: #16161F !important;
         border-color: #2A2A3A !important;
@@ -586,6 +601,9 @@ if st.session_state.dark_mode:
     .stMarkdown p { color: #C9C9D3 !important; }
     ::-webkit-scrollbar-track { background: #0F0F14 !important; }
     ::-webkit-scrollbar-thumb { background: #2A2A3A !important; }
+    /* Toggle button dark override */
+    .theme-toggle-wrap { background: #1E1E2E !important; border-color: #3A3A5A !important; }
+    .theme-toggle-label { color: #C9C9D3 !important; }
     </style>
     """, unsafe_allow_html=True)
 
@@ -964,8 +982,68 @@ with st.sidebar:
     """, unsafe_allow_html=True)
 
     st.markdown("---")
-    dark_label = "☀️ Light Mode" if st.session_state.dark_mode else "🌙 Dark Mode"
-    if st.button(dark_label, use_container_width=True):
+
+    is_dark = st.session_state.dark_mode
+    track_bg = "#6366F1" if is_dark else "#E5E7EB"
+    knob_pos = "translateX(20px)" if is_dark else "translateX(0px)"
+    mode_text = "Dark Mode" if is_dark else "Light Mode"
+
+    st.markdown(f"""
+    <style>
+    .theme-row {{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: {'#1E1E2E' if is_dark else '#F9FAFB'};
+        border: 1px solid {'#3A3A5A' if is_dark else '#E5E7EB'};
+        border-radius: 12px;
+        padding: 10px 14px;
+        margin-bottom: 2px;
+        cursor: pointer;
+    }}
+    .theme-row-label {{
+        font-size: 0.84rem;
+        font-weight: 600;
+        color: {'#C9C9D3' if is_dark else '#374151'};
+        font-family: 'Inter', sans-serif;
+    }}
+    .theme-knob-track {{
+        width: 44px; height: 24px;
+        background: {track_bg};
+        border-radius: 24px;
+        position: relative;
+        transition: background 0.3s;
+        flex-shrink: 0;
+    }}
+    .theme-knob {{
+        position: absolute;
+        width: 18px; height: 18px;
+        background: white;
+        border-radius: 50%;
+        top: 3px; left: 3px;
+        transform: {knob_pos};
+        transition: transform 0.3s;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+    }}
+    /* Make st.button for theme invisible but clickable on top */
+    div[data-testid="stButton"] button[key="theme_btn"],
+    .stButton:has(button[key="theme_btn"]) > button {{
+        position: absolute !important;
+        opacity: 0 !important;
+        width: 100% !important;
+        height: 46px !important;
+        margin-top: -50px !important;
+        cursor: pointer !important;
+        z-index: 10 !important;
+    }}
+    </style>
+    <div class="theme-row">
+        <span class="theme-row-label">{mode_text}</span>
+        <div class="theme-knob-track"><div class="theme-knob"></div></div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    if st.button("toggle", key="theme_btn", use_container_width=True):
         st.session_state.dark_mode = not st.session_state.dark_mode
         st.rerun()
 
