@@ -21,6 +21,10 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+# Dark mode state init
+if "dark_mode" not in st.session_state:
+    st.session_state.dark_mode = False
+
 st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
@@ -349,6 +353,17 @@ div[data-testid="stFileUploader"] small {
     color: #D1D5DB !important;
     font-size: 0.78rem !important;
 }
+/* Uploaded filename — make it visible */
+div[data-testid="stFileUploader"] span,
+div[data-testid="stFileUploaderFileName"],
+div[data-testid="stFileUploader"] [data-testid="stFileUploaderFileName"],
+div[data-testid="stFileUploader"] .uploadedFileName,
+div[data-testid="stFileUploader"] li span,
+div[data-testid="stFileUploader"] li {
+    color: #111111 !important;
+    font-weight: 500 !important;
+    opacity: 1 !important;
+}
 
 /* ── Button ── */
 .stButton > button {
@@ -521,6 +536,58 @@ footer { display: none !important; }
 ::-webkit-scrollbar-thumb:hover { background: #D1D5DB; }
 </style>
 """, unsafe_allow_html=True)
+
+# Dark mode CSS — injected dynamically
+if st.session_state.dark_mode:
+    st.markdown("""
+    <style>
+    .stApp { background-color: #0F0F14 !important; }
+    section[data-testid="stSidebar"] {
+        background-color: #16161F !important;
+        border-right: 1px solid #2A2A3A !important;
+    }
+    section[data-testid="stSidebar"] * { color: #C9C9D3 !important; }
+    .brand-name { color: #F0F0FF !important; }
+    .sec-header { color: #555570 !important; border-bottom-color: #2A2A3A !important; }
+    .metric-card {
+        background: #16161F !important;
+        border-color: #2A2A3A !important;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.4) !important;
+    }
+    .metric-value { color: #F0F0FF !important; }
+    .insight-card {
+        background: #16161F !important;
+        border-color: #2A2A3A !important;
+    }
+    .insight-title { color: #F0F0FF !important; }
+    .insight-body { color: #9999B0 !important; }
+    .insight-action { color: #818CF8 !important; border-top-color: #2A2A3A !important; }
+    .verdict-card { background: #16161F !important; border-color: #2A2A3A !important; }
+    .verdict-text { color: #9999B0 !important; }
+    .conf-track { background: #2A2A3A !important; }
+    div[data-testid="stFileUploader"] > div {
+        background: #16161F !important;
+        border-color: #2A2A3A !important;
+    }
+    div[data-testid="stFileUploader"] > div:hover {
+        border-color: #6366F1 !important;
+        background: #1A1A28 !important;
+    }
+    div[data-testid="stFileUploader"] span,
+    div[data-testid="stFileUploader"] li,
+    div[data-testid="stFileUploader"] li span { color: #F0F0FF !important; }
+    div[data-testid="stPlotlyChart"] {
+        background: #16161F !important;
+        border-color: #2A2A3A !important;
+    }
+    div[data-testid="stDataFrame"] {
+        border-color: #2A2A3A !important;
+    }
+    .stMarkdown p { color: #C9C9D3 !important; }
+    ::-webkit-scrollbar-track { background: #0F0F14 !important; }
+    ::-webkit-scrollbar-thumb { background: #2A2A3A !important; }
+    </style>
+    """, unsafe_allow_html=True)
 
 
 # ── Helpers ──────────────────────────────────────────────────────────────────
@@ -873,9 +940,7 @@ with st.sidebar:
         help="Never stored or logged."
     )
     if api_key:
-        if api_key.startswith("sk-ant-"):
-            st.success("Key format valid ✓")
-        else:
+        if not api_key.startswith("sk-ant-"):
             st.warning("Key format looks off — double check it")
 
     st.markdown("---")
@@ -884,11 +949,10 @@ with st.sidebar:
     <div style="margin-bottom: 10px;">
         <span style="font-family:'JetBrains Mono',monospace; font-size:0.65rem; font-weight:600; color:#9CA3AF; text-transform:uppercase; letter-spacing:0.15em;">How it works</span>
     </div>
-    <div class="how-step"><span class="step-num">01</span><span class="step-text">Enter your Anthropic API key</span></div>
-    <div class="how-step"><span class="step-num">02</span><span class="step-text">Upload any CSV (max 10MB)</span></div>
-    <div class="how-step"><span class="step-num">03</span><span class="step-text">Review auto-generated data profile</span></div>
-    <div class="how-step"><span class="step-num">04</span><span class="step-text">Generate AI business insights</span></div>
-    <div class="how-step"><span class="step-num">05</span><span class="step-text">Download full JSON report</span></div>
+    <div class="how-step"><span class="step-num">01</span><span class="step-text">Upload any CSV (max 10MB)</span></div>
+    <div class="how-step"><span class="step-num">02</span><span class="step-text">Review auto-generated data profile</span></div>
+    <div class="how-step"><span class="step-num">03</span><span class="step-text">Generate AI business insights</span></div>
+    <div class="how-step"><span class="step-num">04</span><span class="step-text">Download full JSON report</span></div>
     """, unsafe_allow_html=True)
 
     st.markdown("---")
@@ -898,6 +962,12 @@ with st.sidebar:
         Powered by Claude Haiku 4.5
     </div>
     """, unsafe_allow_html=True)
+
+    st.markdown("---")
+    dark_label = "☀️ Light Mode" if st.session_state.dark_mode else "🌙 Dark Mode"
+    if st.button(dark_label, use_container_width=True):
+        st.session_state.dark_mode = not st.session_state.dark_mode
+        st.rerun()
 
 
 # ── Main ──────────────────────────────────────────────────────────────────────
