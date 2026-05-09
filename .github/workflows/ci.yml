@@ -1,0 +1,55 @@
+name: CI - EDA Insight Engine
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Cache pip dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Install dev tools
+        run: pip install flake8 pytest
+
+      - name: Lint with flake8
+        run: flake8 app.py --max-line-length=120 --ignore=E501,W503
+
+      - name: Check for hardcoded secrets (basic)
+        run: |
+          if grep -rn "sk-ant-api" . --include="*.py"; then
+            echo "HARDCODED API KEY DETECTED. FAIL."
+            exit 1
+          fi
+
+      - name: Run tests (if tests/ exists)
+        run: |
+          if [ -d "tests" ]; then
+            pytest tests/ -v
+          else
+            echo "No tests directory found. Skipping."
+          fi
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
