@@ -828,8 +828,9 @@ SLATE_C  = '#94A3B8'
 # Cohesive palette — no jarring neons
 PALETTE  = [INDIGO, VIOLET, BLUE_C, SLATE_C, '#A5B4FC', '#C4B5FD']
 
+
 def base_layout(title="", height=None):
-    l = dict(
+    title = dict(
         title=dict(
             text=title,
             font=dict(family='Inter', size=13, color='#374151'),
@@ -852,8 +853,8 @@ def base_layout(title="", height=None):
         showlegend=False
     )
     if height:
-        l['height'] = height
-    return l
+        title['height'] = height
+    return title
 
 
 def render_charts(df: pd.DataFrame):
