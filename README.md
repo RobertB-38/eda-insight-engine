@@ -114,4 +114,4 @@ eda-insight-engine/
 **Robert Borkar** — MSc Data Analytics, Dublin City University  
 [LinkedIn](https://linkedin.com/in/robert-borkar) · [GitHub](https://github.com/RobertB-38)
 
-*Built March 2026 · Powered by Claude Haiku 4.5*
+[![CI](https://github.com/RobertB-38/eda-insight-engine/actions/workflows/ci.yml/badge.svg)](https://github.com/RobertB-38/eda-insight-engine/actions/workflows/ci.yml)
