@@ -986,12 +986,15 @@ with st.sidebar:
     st.markdown("---")
 
     # load from secrets.toml if available — no typing needed locally
-    api_key = st.secrets.get("ANTHROPIC_API_KEY", "") or st.text_input(
-        "Anthropic API Key",
-        type="password",
-        placeholder="sk-ant-api03-...",
-        help="Never stored or logged."
-    )
+    try:
+        api_key = st.secrets.get("ANTHROPIC_API_KEY", "") or st.text_input(
+            "Anthropic API Key",
+            type="password",
+            placeholder="sk-ant-api03-...",
+            help="Never stored or logged."
+        )
+    except Exception:
+        api_key = ""
     if api_key:
         if not api_key.startswith("sk-ant-"):
             st.warning("Key format looks off — double check it")
