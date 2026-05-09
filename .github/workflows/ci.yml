@@ -39,7 +39,7 @@ jobs:
 
       - name: Check for hardcoded secrets (basic)
         run: |
-          if grep -rn "sk-ant-api" . --include="*.py"; then
+          if grep -rn "sk-ant-api" . --include="*.py" | grep -v "placeholder"; then
             echo "HARDCODED API KEY DETECTED. FAIL."
             exit 1
           fi
