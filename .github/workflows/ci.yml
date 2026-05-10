@@ -74,6 +74,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
+          file: ./Dockerfile
           push: true
           tags: ${{ secrets.ACR_LOGIN_SERVER }}/eda-insight-engine:latest
 
